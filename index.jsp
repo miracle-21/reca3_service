@@ -1,101 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bootstrap demo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Dongle&family=Noto+Sans+KR&display=swap');
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-    }
-  </style>
   <title>MariaDB</title>
 </head>
 <body>
+  <%-- MariaDB 연결 정보 --%>
+  <% String url = "jdbc:mariadb://reca3team-mariadb-pmh.c1eiqtt31v98.ap-northeast-2.rds.amazonaws.com:3306/test";
+     String username = "admin";
+     String password = "12345678";
+     String driver = "org.mariadb.jdbc.Driver"; %>
 
+  <%@ page import="java.sql.*" %>
+  <%@ page import="javax.naming.*" %>
+  <%@ page import="javax.sql.*" %>
 
-<div class="container overflow-hidden text-center">
+  <%!
+    public Connection getConnection() throws Exception {
+      String driver = "org.mariadb.jdbc.Driver";
+      String url = "jdbc:mariadb://reca3team-mariadb-pmh.c1eiqtt31v98.ap-northeast-2.rds.amazonaws.com:3306/test";
+     String username = "admin";
+     String password = "12345678";
+      Class.forName(driver);
+      Connection conn = DriverManager.getConnection(url, username, password);
+      return conn;
+    }
+  %>
 
+  <%
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary" style="height: 100px;">
-  <div class="container-fluid">
-    <div>
-      <a class="navbar-brand">Reca3team</a>
-    </div>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page"></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled"></a>
-        </li>
-      </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-    </div>
-  </div>
-</nav>
+    try {
+       conn = getConnection();
+       stmt = conn.createStatement();
+       String sql = "SELECT * FROM user";
+       rs = stmt.executeQuery(sql);
+  %>
 
-<ul class="nav">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="#"></a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link"></a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link"></a>
-  </li>
-
-</ul>
-
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
-  <div class="col">
-    <div class="card h-100">
-      <img src="..." class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">name: 명화이름</h5>
-          <p>artist: 화가</p>
-          <p>type: 장르</p>
-          <p>가격</p>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card h-100">
-      <img src="..." class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">name: 명화이름</h5>
-          <p>artist: 화가</p>
-          <p>type: 장르</p>
-          <p>가격</p>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card h-100">
-      <img src="..." class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">name: 명화이름</h5>
-          <p>artist: 화가</p>
-          <p>type: 장르</p>
-          <p>가격</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-</div>
-
-
-</div>
-
+  <h1>MariaDB Data</h1>
+    <% while (rs.next()) { %>
+        <p>Name: <%= rs.getString("name") %></p>
+        <p>Age: <%= rs.getInt("age") %></p>
+    <% }
+       rs.close();
+       stmt.close();
+       conn.close();
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+    %>
 </body>
 </html>
